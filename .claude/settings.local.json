@@ -10,7 +10,9 @@
       "Bash(tasklist:*)",
       "Bash(node:*)",
       "Bash(docker --version:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

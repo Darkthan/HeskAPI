@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HESK Tickets</title>
+    <link rel="stylesheet" href="/screen/style.css">
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Chargement des tickets...</p>
+    </div>
+
+    <div id="error-container" class="error-container" style="display: none;">
+        <div class="error-message">
+            <h2>Erreur</h2>
+            <p id="error-text"></p>
+        </div>
+    </div>
+
+    <div id="screen-container" style="display: none;">
+        <header class="screen-header">
+            <h1 id="screen-title">Tickets HESK</h1>
+            <div class="header-info">
+                <span id="ticket-count" class="badge">0 tickets</span>
+                <span id="last-update" class="last-update"></span>
+                <span id="refresh-countdown" class="refresh-countdown"></span>
+            </div>
+        </header>
+
+        <div class="filters-bar" id="filters-bar">
+            <!-- Filtres dynamiques seront ajoutés ici -->
+        </div>
+
+        <div class="tickets-container" id="tickets-container">
+            <!-- Les tickets seront affichés ici -->
+        </div>
+    </div>
+
+    <script src="/screen/script.js"></script>
+</body>
+</html>

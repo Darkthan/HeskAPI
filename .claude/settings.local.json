@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run init-db:*)",
+      "Bash(npm start)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(node:*)",
+      "Bash(docker --version:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

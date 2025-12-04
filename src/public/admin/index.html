@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HESK API - Admin</title>
+    <link rel="stylesheet" href="/admin/style.css">
+</head>
+<body>
+    <div id="login-container" class="container">
+        <div class="login-box">
+            <h1>HESK API Admin</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Connexion</button>
+                <div id="login-error" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-container" class="container" style="display: none;">
+        <header>
+            <h1>HESK API - Administration</h1>
+            <div class="header-actions">
+                <span id="username-display"></span>
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="hesk-config">Configuration HESK</button>
+            <button class="tab-btn" data-tab="screens">Écrans</button>
+            <button class="tab-btn" data-tab="api-docs">Documentation API</button>
+        </nav>
+
+        <div class="tab-content">
+            <!-- HESK Configuration Tab -->
+            <div id="hesk-config" class="tab-panel active">
+                <h2>Configuration HESK</h2>
+                <div id="hesk-status" class="status-box"></div>
+
+                <form id="hesk-config-form">
+                    <div class="form-group">
+                        <label>URL HESK</label>
+                        <input type="url" id="hesk-url" placeholder="https://hesk.example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="hesk-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="hesk-password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="test-hesk-btn" class="btn btn-secondary">Tester la connexion</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                    <div id="hesk-message" class="message"></div>
+                </form>
+            </div>
+
+            <!-- Screens Tab -->
+            <div id="screens" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Gestion des Écrans</h2>
+                    <button id="create-screen-btn" class="btn btn-primary">Nouvel Écran</button>
+                </div>
+
+                <div id="screens-list" class="screens-list">
+                    <!-- Les écrans seront chargés ici -->
+                </div>
+            </div>
+
+            <!-- API Docs Tab -->
+            <div id="api-docs" class="tab-panel">
+                <h2>Documentation API</h2>
+                <p>La documentation complète de l'API est disponible sur Swagger UI :</p>
+                <a href="/api-docs" target="_blank" class="btn btn-primary">Ouvrir la documentation Swagger</a>
+
+                <div class="api-summary">
+                    <h3>Endpoints principaux</h3>
+
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <code>/api/tickets/:uniqueId</code>
+                        <p>Récupère les tickets pour un écran public (pas d'authentification requise)</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <code>/api/auth/login</code>
+                        <p>Connexion administrateur</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <code>/api/screens</code>
+                        <p>Liste tous les écrans (authentification requise)</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <code>/api/screens</code>
+                        <p>Créer un nouvel écran (authentification requise)</p>
+                    </div>
+
+                    <h3>Accès aux écrans publics</h3>
+                    <p>Chaque écran est accessible via une URL unique :</p>
+                    <code class="code-block">http://localhost:3000/screen/:uniqueId</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour créer/éditer un écran -->
+    <div id="screen-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nouvel Écran</h2>
+                <button type="button" class="modal-close">&times;</button>
+            </div>
+            <form id="screen-form">
+                <input type="hidden" id="screen-id">
+
+                <div class="form-group">
+                    <label>Nom de l'écran</label>
+                    <input type="text" id="screen-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Intervalle de rafraîchissement (secondes)</label>
+                    <input type="number" id="screen-refresh" value="60" min="10">
+                </div>
+
+                <h3>Filtres</h3>
+
+                <div class="form-group">
+                    <label>Statuts (un par ligne)</label>
+                    <textarea id="screen-status-filter" placeholder="Open&#10;Resolved&#10;In Progress" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Catégories (un par ligne)</label>
+                    <textarea id="screen-category-filter" placeholder="Support&#10;Bug&#10;Feature Request" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Priorités (un par ligne)</label>
+                    <textarea id="screen-priority-filter" placeholder="High&#10;Medium&#10;Low" rows="4"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger modal-close">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/admin/script.js"></script>
+</body>
+</html>

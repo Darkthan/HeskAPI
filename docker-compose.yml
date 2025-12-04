@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  hesk-api:
+    build: .
+    container_name: hesk-api
+    ports:
+      - "${HOST_PORT:-3000}:${CONTAINER_PORT:-3000}"
+    env_file:
+      - .env.docker
+    environment:
+      # Configuration du serveur
+      - PORT=${CONTAINER_PORT:-3000}
+      - NODE_ENV=${NODE_ENV:-production}
+
+      # JWT Secret
+      - JWT_SECRET=${JWT_SECRET}
+
+      # Identifiants admin
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+
+      # Clé de chiffrement
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+
+      # Base de données
+      - DB_PATH=${DB_PATH:-/app/data/database.sqlite}
+
+      # Rate Limiting
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+
+    volumes:
+      # Persister la base de données
+      - hesk-data:/app/data
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:${CONTAINER_PORT:-3000}/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  hesk-data:
+    driver: local

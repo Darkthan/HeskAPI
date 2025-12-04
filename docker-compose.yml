@@ -4,25 +4,25 @@ services:
   hesk-api:
     build: .
     container_name: hesk-api
-    env_file:
-      - .env.docker
     ports:
-      # Le port est configuré dans .env.docker (HOST_PORT)
+      # Port configurable via HOST_PORT et CONTAINER_PORT
       - "${HOST_PORT:-3000}:${CONTAINER_PORT:-3000}"
     environment:
       # Configuration du serveur
       - PORT=${CONTAINER_PORT:-3000}
       - NODE_ENV=${NODE_ENV:-production}
 
-      # JWT Secret (configuré dans .env.docker)
-      - JWT_SECRET=${JWT_SECRET}
+      # JWT Secret (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
+      # Générez avec: openssl rand -hex 32
+      - JWT_SECRET=${JWT_SECRET:-hesk-api-secret-key-change-in-production-2024}
 
-      # Identifiants admin (configurés dans .env.docker)
-      - ADMIN_USERNAME=${ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      # Identifiants admin par défaut (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
 
-      # Clé de chiffrement (configurée dans .env.docker)
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      # Clé de chiffrement (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
+      # Générez avec: openssl rand -hex 32
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-hesk-encryption-key-change-in-production-2024}
 
       # Base de données
       - DB_PATH=${DB_PATH:-/app/data/database.sqlite}

@@ -89,9 +89,43 @@ apihesk/
 
 ## Déploiement Docker
 
-### Configuration initiale
+### Déploiement avec Portainer (recommandé pour production)
 
-Avant de démarrer, copiez et personnalisez le fichier de configuration Docker :
+1. **Dans Portainer**, allez dans **Stacks** → **Add stack**
+
+2. **Méthode 1 - Upload depuis Git** :
+   - Repository URL : `votre-repo-git`
+   - Compose path : `docker-compose.yml`
+
+3. **Méthode 2 - Web editor** :
+   - Copiez le contenu du fichier `docker-compose.yml`
+
+4. **Configurez les variables d'environnement** dans la section **Environment variables** :
+
+   **⚠️ Variables OBLIGATOIRES à changer en production :**
+   ```
+   HOST_PORT=3000                                    # Port d'accès (ex: 8080)
+   JWT_SECRET=<généré avec: openssl rand -hex 32>   # Clé JWT
+   ENCRYPTION_KEY=<généré avec: openssl rand -hex 32> # Clé chiffrement
+   ADMIN_USERNAME=votre_admin                        # Login admin
+   ADMIN_PASSWORD=votre_mot_de_passe_securise       # Mot de passe admin
+   ```
+
+   **Variables optionnelles :**
+   ```
+   CONTAINER_PORT=3000                  # Port interne (ne pas modifier)
+   NODE_ENV=production
+   RATE_LIMIT_WINDOW_MS=900000          # 15 minutes
+   RATE_LIMIT_MAX_REQUESTS=100
+   ```
+
+5. **Déployez la stack**
+
+6. **Accédez à l'application** : `http://votre-serveur:PORT`
+
+### Configuration initiale (méthode alternative avec fichier .env)
+
+Si vous préférez utiliser un fichier `.env.docker` :
 
 ```bash
 # Créer votre fichier de configuration
@@ -106,7 +140,7 @@ cp .env.docker.example .env.docker
 
 **Note:** Le fichier `.env.docker` contient des commentaires détaillés pour chaque variable.
 
-### Utilisation avec Docker Compose (recommandé)
+### Utilisation avec Docker Compose (ligne de commande)
 
 ```bash
 # Construire et démarrer le conteneur

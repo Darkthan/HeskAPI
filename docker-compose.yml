@@ -5,11 +5,15 @@ services:
     build: .
     container_name: hesk-api
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:3000"
     environment:
       # Configuration du serveur
       - PORT=3000
       - NODE_ENV=production
+
+      # Port exposé sur l'hôte (modifiable dans Portainer)
+      # Changez HOST_PORT si le port 3000 est déjà utilisé
+      - HOST_PORT=${HOST_PORT:-3000}
 
       # JWT Secret (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
       # Générez avec: openssl rand -hex 32

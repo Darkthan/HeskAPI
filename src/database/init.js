@@ -59,6 +59,7 @@ db.serialize(() => {
       filters TEXT NOT NULL,
       refresh_interval INTEGER DEFAULT 60,
       display_config TEXT,
+      dark_mode INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )

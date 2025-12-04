@@ -40,6 +40,11 @@ async function loadScreen() {
         screenTitle.textContent = screenConfig.name;
         document.title = screenConfig.name;
 
+        // Appliquer le thème sombre si activé
+        if (screenConfig.dark_mode === 1) {
+            document.body.classList.add('dark-mode');
+        }
+
         // Afficher les filtres actifs
         displayFilters();
 

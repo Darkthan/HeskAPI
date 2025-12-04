@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "init-db": "node src/database/init.js"
+    "init-db": "node src/database/init.js",
+    "migrate": "node src/database/migrate-add-dark-mode.js"
   },
   "keywords": ["hesk", "scraping", "api", "helpdesk"],
   "author": "",

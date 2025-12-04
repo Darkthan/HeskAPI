@@ -234,7 +234,7 @@ async function loadScreens() {
 
         screensList.innerHTML = screens.map(screen => `
             <div class="screen-card">
-                <h3>${escapeHtml(screen.name)}</h3>
+                <h3>${escapeHtml(screen.name)} ${screen.dark_mode === 1 ? '<span style="background: #333; color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; margin-left: 8px;">🌙 Mode sombre</span>' : ''}</h3>
                 <div class="screen-info">
                     <p><strong>Rafraîchissement:</strong> ${screen.refresh_interval}s</p>
                     <p><strong>Filtres:</strong></p>
@@ -287,6 +287,7 @@ async function loadScreenData(screenId) {
         document.getElementById('screen-id').value = screen.id;
         document.getElementById('screen-name').value = screen.name;
         document.getElementById('screen-refresh').value = screen.refresh_interval;
+        document.getElementById('screen-dark-mode').checked = screen.dark_mode === 1;
         document.getElementById('screen-status-filter').value = screen.filters.status?.join('\n') || '';
         document.getElementById('screen-category-filter').value = screen.filters.category?.join('\n') || '';
         document.getElementById('screen-priority-filter').value = screen.filters.priority?.join('\n') || '';
@@ -302,6 +303,7 @@ async function handleScreenSubmit(e) {
     const name = document.getElementById('screen-name').value;
     const refreshValue = document.getElementById('screen-refresh').value;
     const refresh_interval = refreshValue ? parseInt(refreshValue) : 60;
+    const dark_mode = document.getElementById('screen-dark-mode').checked ? 1 : 0;
 
     const filters = {
         status: parseFilterList(document.getElementById('screen-status-filter').value),
@@ -309,7 +311,7 @@ async function handleScreenSubmit(e) {
         priority: parseFilterList(document.getElementById('screen-priority-filter').value)
     };
 
-    console.log('Submitting screen:', { screenId, name, filters, refresh_interval });
+    console.log('Submitting screen:', { screenId, name, filters, refresh_interval, dark_mode });
 
     try {
         // Vérifier si screenId est vraiment défini (pas vide ni "undefined")
@@ -321,7 +323,7 @@ async function handleScreenSubmit(e) {
 
         const response = await fetchAPI(url, {
             method,
-            body: JSON.stringify({ name, filters, refresh_interval })
+            body: JSON.stringify({ name, filters, refresh_interval, dark_mode })
         });
 
         console.log('Response status:', response.status);

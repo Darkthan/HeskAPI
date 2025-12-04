@@ -7,6 +7,7 @@ API de scraping HESK avec interface d'administration et écrans publics de visua
 - **Console Admin** : Gestion des credentials HESK, configuration des écrans, documentation API
 - **API REST** : Endpoints pour récupérer les demandes HESK via scraping
 - **Écrans publics** : Affichage des demandes avec filtres configurables via liens uniques
+- **Thème sombre** : Mode sombre activable pour chaque écran via la console admin
 - **Sécurité** : Authentification JWT pour l'admin, liens uniques par écran
 
 ## Installation
@@ -30,6 +31,19 @@ npm start
 ```bash
 npm run dev
 ```
+
+## Migration de base de données
+
+Si vous avez une base de données existante et souhaitez ajouter le support du thème sombre :
+
+```bash
+# Exécuter le script de migration
+npm run migrate
+```
+
+Cette migration ajoute le champ `dark_mode` à la table `screens` pour permettre l'activation du thème sombre par écran.
+
+**Note:** Pour les déploiements Docker, la migration est automatiquement exécutée au démarrage du conteneur.
 
 ## Accès
 

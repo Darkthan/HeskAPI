@@ -61,7 +61,7 @@ class ScreenController {
 
   async create(req, res) {
     try {
-      const { name, filters, refresh_interval, display_config } = req.body;
+      const { name, filters, refresh_interval, display_config, dark_mode } = req.body;
 
       if (!name || !filters) {
         return res.status(400).json({ error: 'Nom et filtres requis' });
@@ -71,13 +71,14 @@ class ScreenController {
       const uniqueId = uuidv4().replace(/-/g, '').substring(0, 16);
 
       const result = await db.run(
-        'INSERT INTO screens (name, unique_id, filters, refresh_interval, display_config) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO screens (name, unique_id, filters, refresh_interval, display_config, dark_mode) VALUES (?, ?, ?, ?, ?, ?)',
         [
           name,
           uniqueId,
           JSON.stringify(filters),
           refresh_interval || 60,
-          display_config ? JSON.stringify(display_config) : null
+          display_config ? JSON.stringify(display_config) : null,
+          dark_mode || 0
         ]
       );
 
@@ -101,7 +102,7 @@ class ScreenController {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { name, filters, refresh_interval, display_config } = req.body;
+      const { name, filters, refresh_interval, display_config, dark_mode } = req.body;
 
       const screen = await db.get('SELECT * FROM screens WHERE id = ?', [id]);
 
@@ -110,12 +111,13 @@ class ScreenController {
       }
 
       await db.run(
-        'UPDATE screens SET name = ?, filters = ?, refresh_interval = ?, display_config = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        'UPDATE screens SET name = ?, filters = ?, refresh_interval = ?, display_config = ?, dark_mode = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
         [
           name || screen.name,
           filters ? JSON.stringify(filters) : screen.filters,
           refresh_interval !== undefined ? refresh_interval : screen.refresh_interval,
           display_config ? JSON.stringify(display_config) : screen.display_config,
+          dark_mode !== undefined ? dark_mode : screen.dark_mode,
           id
         ]
       );

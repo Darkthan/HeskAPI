@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+echo "🔧 Initialisation de la base de données..."
+node /app/src/database/init.js
+
+echo "🚀 Démarrage du serveur..."
+exec node /app/src/server.js

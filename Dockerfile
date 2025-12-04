@@ -16,11 +16,15 @@ COPY . .
 # Créer le répertoire pour la base de données
 RUN mkdir -p /app/data
 
+# Copier le script d'entrypoint et le rendre exécutable
+COPY docker-entrypoint.sh /app/
+RUN chmod +x /app/docker-entrypoint.sh
+
 # Exposer le port de l'application
 EXPOSE 3000
 
 # Variable d'environnement pour indiquer qu'on est en production
 ENV NODE_ENV=production
 
-# Commande pour démarrer l'application
-CMD ["node", "src/server.js"]
+# Commande pour démarrer l'application (initialise la DB puis démarre le serveur)
+CMD ["/app/docker-entrypoint.sh"]

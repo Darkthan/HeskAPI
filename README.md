@@ -208,9 +208,23 @@ Toutes les variables sont configurables dans le fichier `.env.docker` :
 openssl rand -hex 32
 ```
 
+### Initialisation automatique
+
+La base de données est **automatiquement initialisée** au premier démarrage du conteneur avec :
+- Création des tables nécessaires (users, hesk_config, screens)
+- Création de l'utilisateur admin avec les identifiants configurés dans les variables d'environnement
+
+Lors des redémarrages suivants, si la base de données existe déjà dans le volume persistant, elle ne sera pas réinitialisée.
+
 ### Persistance des données
 
 Les données de la base SQLite sont stockées dans un volume Docker nommé `hesk-data`. Cela permet de conserver les données même après la suppression du conteneur.
+
+**⚠️ Important :** Pour réinitialiser complètement l'application (y compris la base de données), supprimez le volume :
+```bash
+docker-compose down -v
+docker-compose up -d
+```
 
 ### Health Check
 

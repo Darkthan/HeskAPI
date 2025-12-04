@@ -40,9 +40,21 @@ function setupEventListeners() {
     document.getElementById('create-screen-btn').addEventListener('click', () => openScreenModal());
     document.getElementById('screen-form').addEventListener('submit', handleScreenSubmit);
 
+    // Users
+    document.getElementById('create-user-btn').addEventListener('click', () => openUserModal());
+    document.getElementById('user-form').addEventListener('submit', handleUserSubmit);
+    document.getElementById('password-form').addEventListener('submit', handlePasswordSubmit);
+
     // Modal
     document.querySelectorAll('.modal-close').forEach(btn => {
-        btn.addEventListener('click', closeScreenModal);
+        btn.addEventListener('click', (e) => {
+            const modalId = e.target.dataset.modal;
+            if (modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            } else {
+                closeScreenModal();
+            }
+        });
     });
 }
 
@@ -115,6 +127,8 @@ function switchTab(tabName) {
         loadHeskConfig();
     } else if (tabName === 'screens') {
         loadScreens();
+    } else if (tabName === 'users') {
+        loadUsers();
     }
 }
 
@@ -122,6 +136,7 @@ function switchTab(tabName) {
 async function loadInitialData() {
     await loadHeskConfig();
     await loadScreens();
+    await loadUsers();
 }
 
 // HESK Config
@@ -400,4 +415,143 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Users Management
+async function loadUsers() {
+    try {
+        const response = await fetchAPI('/api/users');
+        const data = await response.json();
+        const users = data.users;
+
+        const usersList = document.getElementById('users-list');
+
+        if (users.length === 0) {
+            usersList.innerHTML = '<p style="color: #999;">Aucun utilisateur. Cliquez sur "Nouvel Utilisateur" pour créer un compte.</p>';
+            return;
+        }
+
+        usersList.innerHTML = users.map(user => `
+            <div class="user-card">
+                <div class="user-info">
+                    <h3>${escapeHtml(user.username)}</h3>
+                    <div class="user-meta">
+                        <span>Créé le: ${new Date(user.created_at).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn-secondary" onclick="openPasswordModal(${user.id}, '${escapeHtml(user.username)}')">Mot de passe</button>
+                    <button class="btn btn-danger" onclick="deleteUser(${user.id}, '${escapeHtml(user.username)}')">Supprimer</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erreur chargement utilisateurs:', error);
+    }
+}
+
+function openUserModal() {
+    const modal = document.getElementById('user-modal');
+    const form = document.getElementById('user-form');
+
+    form.reset();
+    document.getElementById('user-id').value = '';
+    document.getElementById('user-modal-title').textContent = 'Nouvel Utilisateur';
+
+    modal.classList.add('active');
+}
+
+async function handleUserSubmit(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('user-username').value;
+    const password = document.getElementById('user-password').value;
+
+    if (password.length < 6) {
+        alert('Le mot de passe doit contenir au moins 6 caractères');
+        return;
+    }
+
+    try {
+        const response = await fetchAPI('/api/users', {
+            method: 'POST',
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('user-modal').classList.remove('active');
+            await loadUsers();
+            alert(data.message);
+        } else {
+            alert(data.error || 'Erreur lors de la création');
+        }
+    } catch (error) {
+        alert('Erreur lors de la création: ' + error.message);
+    }
+}
+
+function openPasswordModal(userId, username) {
+    const modal = document.getElementById('password-modal');
+    const form = document.getElementById('password-form');
+
+    form.reset();
+    document.getElementById('password-user-id').value = userId;
+    document.getElementById('password-username').value = username;
+
+    modal.classList.add('active');
+}
+
+async function handlePasswordSubmit(e) {
+    e.preventDefault();
+
+    const userId = document.getElementById('password-user-id').value;
+    const password = document.getElementById('password-new').value;
+
+    if (password.length < 6) {
+        alert('Le mot de passe doit contenir au moins 6 caractères');
+        return;
+    }
+
+    try {
+        const response = await fetchAPI(`/api/users/${userId}/password`, {
+            method: 'PUT',
+            body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('password-modal').classList.remove('active');
+            alert(data.message);
+        } else {
+            alert(data.error || 'Erreur lors de la modification');
+        }
+    } catch (error) {
+        alert('Erreur lors de la modification: ' + error.message);
+    }
+}
+
+async function deleteUser(userId, username) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${username}" ?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetchAPI(`/api/users/${userId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            await loadUsers();
+            alert(data.message);
+        } else {
+            alert(data.error || 'Erreur lors de la suppression');
+        }
+    } catch (error) {
+        alert('Erreur lors de la suppression: ' + error.message);
+    }
 }

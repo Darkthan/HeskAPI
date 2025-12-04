@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth.routes');
 const heskConfigRoutes = require('./routes/hesk-config.routes');
 const screenRoutes = require('./routes/screen.routes');
 const ticketRoutes = require('./routes/ticket.routes');
+const userRoutes = require('./routes/user.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hesk', heskConfigRoutes);
 app.use('/api/screens', screenRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/users', userRoutes);
 
 // Frontend routes
 app.get('/admin', (req, res) => {

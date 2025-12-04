@@ -65,12 +65,24 @@ apihesk/
 
 ### Admin
 - `POST /api/auth/login` - Connexion admin
+
+**Configuration HESK:**
 - `GET /api/hesk/config` - Récupérer la configuration HESK
 - `PUT /api/hesk/config` - Mettre à jour la configuration HESK
+- `POST /api/hesk/test` - Tester la connexion HESK
+
+**Gestion des écrans:**
 - `GET /api/screens` - Liste des écrans
 - `POST /api/screens` - Créer un écran
+- `GET /api/screens/:id` - Détails d'un écran
 - `PUT /api/screens/:id` - Modifier un écran
 - `DELETE /api/screens/:id` - Supprimer un écran
+
+**Gestion des utilisateurs:**
+- `GET /api/users` - Liste des utilisateurs
+- `POST /api/users` - Créer un utilisateur
+- `PUT /api/users/:id/password` - Modifier le mot de passe
+- `DELETE /api/users/:id` - Supprimer un utilisateur
 
 ### Public
 - `GET /api/tickets/:screenId` - Récupérer les demandes pour un écran

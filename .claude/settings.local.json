@@ -9,7 +9,8 @@
       "Bash(taskkill:*)",
       "Bash(tasklist:*)",
       "Bash(node:*)",
-      "Bash(docker --version:*)"
+      "Bash(docker --version:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

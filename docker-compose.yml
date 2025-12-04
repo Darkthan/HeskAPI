@@ -4,33 +4,32 @@ services:
   hesk-api:
     build: .
     container_name: hesk-api
+    env_file:
+      - .env.docker
     ports:
-      # ⚠️ MODIFIEZ ICI LE PORT SI 3000 EST DÉJÀ UTILISÉ
-      # Format: "PORT_HOTE:3000" (ex: "8080:3000" ou "3001:3000")
-      - "3000:3000"
+      # Le port est configuré dans .env.docker (HOST_PORT)
+      - "${HOST_PORT:-3000}:${CONTAINER_PORT:-3000}"
     environment:
-      # Configuration du serveur (ne pas modifier)
-      - PORT=3000
-      - NODE_ENV=production
+      # Configuration du serveur
+      - PORT=${CONTAINER_PORT:-3000}
+      - NODE_ENV=${NODE_ENV:-production}
 
-      # JWT Secret (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
-      # Générez avec: openssl rand -hex 32
-      - JWT_SECRET=hesk-api-secret-key-change-in-production-2024
+      # JWT Secret (configuré dans .env.docker)
+      - JWT_SECRET=${JWT_SECRET}
 
-      # Identifiants admin par défaut (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
-      - ADMIN_USERNAME=admin
-      - ADMIN_PASSWORD=admin123
+      # Identifiants admin (configurés dans .env.docker)
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
 
-      # Clé de chiffrement (⚠️ CHANGEZ EN PRODUCTION via Portainer!)
-      # Générez avec: openssl rand -hex 32
-      - ENCRYPTION_KEY=hesk-encryption-key-change-in-production-2024
+      # Clé de chiffrement (configurée dans .env.docker)
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
 
       # Base de données
-      - DB_PATH=/app/data/database.sqlite
+      - DB_PATH=${DB_PATH:-/app/data/database.sqlite}
 
       # Rate Limiting
-      - RATE_LIMIT_WINDOW_MS=900000
-      - RATE_LIMIT_MAX_REQUESTS=100
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
 
     volumes:
       # Persister la base de données

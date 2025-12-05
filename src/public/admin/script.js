@@ -240,7 +240,7 @@ async function loadScreens() {
                     <p><strong>Filtres:</strong></p>
                     <ul style="margin-left: 20px; font-size: 13px;">
                         ${screen.filters.status?.length ? `<li>Statuts: ${screen.filters.status.join(', ')}</li>` : ''}
-                        ${screen.filters.category?.length ? `<li>Catégories: ${screen.filters.category.join(', ')}</li>` : ''}
+                        ${screen.filters.room?.length ? `<li>Salles: ${screen.filters.room.join(', ')}</li>` : ''}
                         ${screen.filters.priority?.length ? `<li>Priorités: ${screen.filters.priority.join(', ')}</li>` : ''}
                     </ul>
                 </div>
@@ -289,7 +289,7 @@ async function loadScreenData(screenId) {
         document.getElementById('screen-refresh').value = screen.refresh_interval;
         document.getElementById('screen-dark-mode').checked = screen.dark_mode === 1;
         document.getElementById('screen-status-filter').value = screen.filters.status?.join('\n') || '';
-        document.getElementById('screen-category-filter').value = screen.filters.category?.join('\n') || '';
+        document.getElementById('screen-room-filter').value = screen.filters.room?.join('\n') || '';
         document.getElementById('screen-priority-filter').value = screen.filters.priority?.join('\n') || '';
     } catch (error) {
         console.error('Erreur chargement écran:', error);
@@ -307,7 +307,7 @@ async function handleScreenSubmit(e) {
 
     const filters = {
         status: parseFilterList(document.getElementById('screen-status-filter').value),
-        category: parseFilterList(document.getElementById('screen-category-filter').value),
+        room: parseFilterList(document.getElementById('screen-room-filter').value),
         priority: parseFilterList(document.getElementById('screen-priority-filter').value)
     };
 

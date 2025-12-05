@@ -103,11 +103,11 @@ function displayFilters() {
         html += '</div>';
     }
 
-    if (filters.category?.length > 0) {
+    if (filters.room?.length > 0) {
         html += '<div class="filter-group">';
-        html += '<span class="filter-label">Catégories:</span>';
-        filters.category.forEach(cat => {
-            html += `<span class="filter-tag">${escapeHtml(cat)}</span>`;
+        html += '<span class="filter-label">Salles:</span>';
+        filters.room.forEach(room => {
+            html += `<span class="filter-tag">${escapeHtml(room)}</span>`;
         });
         html += '</div>';
     }
@@ -142,31 +142,36 @@ function displayTickets(tickets) {
         const statusClass = getStatusClass(ticket.status);
 
         return `
-            <div class="ticket-card ${priorityClass}">
+            <div class="ticket-card ${priorityClass} status-${statusClass}">
                 <div class="ticket-header">
                     <span class="ticket-id">#${escapeHtml(ticket.id)}</span>
                     <span class="ticket-status ${statusClass}">${escapeHtml(ticket.status)}</span>
                 </div>
                 <div class="ticket-subject">${escapeHtml(ticket.subject)}</div>
                 <div class="ticket-meta">
-                    <span class="ticket-meta-label">Catégorie:</span>
-                    <span class="ticket-meta-value">
-                        <span class="ticket-category">${escapeHtml(ticket.category)}</span>
-                    </span>
+                    <div class="ticket-meta-row">
+                        <span class="ticket-meta-label">Salle</span>
+                        <span class="ticket-meta-value">
+                            <span class="ticket-room">${escapeHtml(ticket.room)}</span>
+                        </span>
+                    </div>
 
-                    <span class="ticket-meta-label">Priorité:</span>
-                    <span class="ticket-meta-value">
-                        <span class="ticket-priority ${getPriorityClass(ticket.priority)}">${escapeHtml(ticket.priority)}</span>
-                    </span>
+                    <div class="ticket-meta-row">
+                        <span class="ticket-meta-label">Priorité</span>
+                        <span class="ticket-meta-value">
+                            <span class="ticket-priority ${getPriorityClass(ticket.priority)}">${escapeHtml(ticket.priority)}</span>
+                        </span>
+                    </div>
 
                     ${ticket.owner ? `
-                        <span class="ticket-meta-label">Assigné à:</span>
-                        <span class="ticket-meta-value">${escapeHtml(ticket.owner)}</span>
+                        <div class="ticket-meta-row">
+                            <span class="ticket-meta-label">Assigné à</span>
+                            <span class="ticket-meta-value">${escapeHtml(ticket.owner)}</span>
+                        </div>
                     ` : ''}
                 </div>
                 <div class="ticket-dates">
-                    <span>Créé: ${escapeHtml(ticket.created_at)}</span>
-                    <span>MAJ: ${escapeHtml(ticket.updated_at)}</span>
+                    <span>🔄 MAJ: ${escapeHtml(ticket.updated_at)}</span>
                 </div>
             </div>
         `;
@@ -200,11 +205,39 @@ function getPriorityClass(priority) {
 
 function getStatusClass(status) {
     const s = status.toLowerCase();
-    if (s.includes('open') || s.includes('ouvert') || s.includes('new')) return 'open';
-    if (s.includes('resolved') || s.includes('résolu')) return 'resolved';
-    if (s.includes('progress') || s.includes('cours')) return 'in-progress';
-    if (s.includes('closed') || s.includes('fermé')) return 'closed';
-    return 'open';
+
+    // Nouveau
+    if (s.includes('nouveau')) return 'nouveau';
+
+    // Attente Réponse
+    if (s.includes('attente') && s.includes('réponse')) return 'attente-reponse';
+
+    // Répondu
+    if (s.includes('répondu')) return 'repondu';
+
+    // Résolu
+    if (s.includes('résolu') || s.includes('resolved')) return 'resolu';
+
+    // En Cours
+    if (s.includes('en cours') || s.includes('progress')) return 'en-cours';
+
+    // En Attente (générique)
+    if (s.includes('en attente')) return 'en-attente';
+
+    // A commander ou négocier
+    if (s.includes('commander') || s.includes('négocier')) return 'a-commander';
+
+    // R&D
+    if (s.includes('r&d')) return 'rd';
+
+    // En attente de réception du colis
+    if (s.includes('réception') && s.includes('colis')) return 'attente-colis';
+
+    // Fallbacks pour compatibilité
+    if (s.includes('open') || s.includes('ouvert') || s.includes('new')) return 'nouveau';
+    if (s.includes('closed') || s.includes('fermé')) return 'resolu';
+
+    return 'nouveau';
 }
 
 function showError(message) {
